@@ -48,5 +48,26 @@ def window_reverse_3d(windows, window_size, D, H, W):
         window_size,
         -1
     )
-    x = x.permute(0, 1, 3, 5, 2, 4, 6, 7).contiguous().view(B, D, H, W, -1)
+    x = x.permute(0, 1, 4, 2, 5, 3, 6, 7).contiguous().view(B, D, H, W, -1)
     return x
+
+
+if __name__ == "__main__":
+    b = 4
+    d = 12
+    h = 12
+    w = 12
+    c = 8
+    window_size = 3
+
+    x = torch.randn(b, d, h, w, c)
+
+    print("x size:", x.shape)
+
+    x_part = window_partition_3d(x, window_size)
+    print("x_part size:", x_part.shape)
+
+    x_res = window_reverse_3d(x_part, window_size, d, h, w)
+    print("x_res size:", x_res.shape)
+
+    print("x == x_res?", torch.equal(x, x_res))
